@@ -11,9 +11,9 @@ int main()
 
     while (1)
     {
-        servo_move_to(2, 250);
+        servo_move_to(2, 0);
         sleep_ms(1000);
-        servo_move_to(2, 1250);
+        servo_move_to(2, 180);
         sleep_ms(1000);
     }
     return 0;

@@ -9,10 +9,11 @@
 
 
 #define WRAP 10000
-#define CLKDIV 250
+#define FREQ 50
 
-#define _WRAP_HANDLER(x) pwm##x##_cb
-#define WRAP_HANDLER(x) _WRAP_HANDLER(x)
+float clkdiv;
+uint min;
+uint max;
 
 static uint slice_map[30];
 static uint slice_active[8];
@@ -95,6 +96,10 @@ int servo_init()
     pwm_cb[5] = pwm5_cb;
     pwm_cb[6] = pwm6_cb;
     pwm_cb[7] = pwm7_cb;
+
+    clkdiv = (float)frequency_count_khz(CLOCKS_FC0_SRC_VALUE_PLL_SYS_CLKSRC_PRIMARY) * 1000.f / (FREQ * WRAP);
+    min = 0.025f * WRAP;
+    max = 0.125f * WRAP;
 }
 
 int servo_attach(uint pin)
@@ -117,7 +122,7 @@ int servo_attach(uint pin)
 
         pwm_config cfg = pwm_get_default_config();
         pwm_config_set_wrap(&cfg, WRAP);
-        pwm_config_set_clkdiv(&cfg, CLKDIV);
+        pwm_config_set_clkdiv(&cfg, clkdiv);
         pwm_init(slice, &cfg, true);
     }
 
@@ -128,8 +133,9 @@ int servo_attach(uint pin)
 
 int servo_move_to(uint pin, uint angle)
 {
+    uint val = (float)angle / 180.f * (max - min) + min;
     uint pos = slice_map[pin] + (pin % 2);
-    servo_pos[16 * servo_pos_buf[pos] + pos] = angle;
+    servo_pos[16 * servo_pos_buf[pos] + pos] = val;
     servo_pos_buf[pos] = (servo_pos_buf[pos] + 1) % 2;
     return 0;
 }
