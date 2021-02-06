@@ -23,12 +23,16 @@ static uint servo_pos_buf[16];
 static pwm_generic_cb(uint slice)
 {
     pwm_clear_irq(slice);
-    
-    pwm_set_chan_level(slice, 0, servo_pos[16 * servo_pos_buf[slice + 0] + slice + 0]);
-    servo_pos_buf[slice + 0] = (servo_pos_buf[slice + 0] + 16) % 32; // flip buffer
 
-    pwm_set_chan_level(slice, 1, servo_pos[16 * servo_pos_buf[slice + 1] + slice + 1]);
-    servo_pos_buf[slice + 1] = (servo_pos_buf[slice + 1] + 16) % 32; // flip buffer
+    uint offset;
+
+    offset = 16 * ((servo_pos_buf[slice + 0] + 1) % 2);
+    pwm_set_chan_level(slice, 0, servo_pos[offset + slice + 0]);
+    //servo_pos_buf[slice + 0] = (servo_pos_buf[slice + 0] + 16) % 32; // flip buffer
+
+    offset = 16 * ((servo_pos_buf[slice + 1] + 1) % 2);
+    pwm_set_chan_level(slice, 1, servo_pos[offset + slice + 1]);
+    //servo_pos_buf[slice + 1] = (servo_pos_buf[slice + 1] + 16) % 32; // flip buffer
 }
 
 static void pwm0_cb()
@@ -81,6 +85,8 @@ int servo_init()
 {
     memset(slice_map, 0xFF, 30 * sizeof(uint));
     memset(slice_active, 0, 8 * sizeof(uint));
+    memset(servo_pos, 0, 32 * sizeof(uint));
+    memset(servo_pos_buf, 0, 16 * sizeof(uint));
     pwm_cb[0] = pwm0_cb;
     pwm_cb[1] = pwm1_cb;
     pwm_cb[2] = pwm2_cb;
@@ -124,6 +130,6 @@ int servo_move_to(uint pin, uint angle)
 {
     uint pos = slice_map[pin] + (pin % 2);
     servo_pos[16 * servo_pos_buf[pos] + pos] = angle;
-
+    servo_pos_buf[pos] = (servo_pos_buf[pos] + 1) % 2;
     return 0;
 }

@@ -3,6 +3,7 @@
 
 #include "pico/stdlib.h"
 
+int servo_init();
 int servo_attach(uint);
 int servo_move_to(uint, uint);
 
