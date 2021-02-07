@@ -1,6 +1,7 @@
 # pico-servo
 
-A simple C library for controlling servos using a Raspberry Pi Pico
+A simple C library for controlling servos using a Raspberry Pi Pico<br>
+This is still a work-in-progress!
 
 ## How to Build
 `mkdir build && cd build`<br>
