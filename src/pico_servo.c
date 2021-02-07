@@ -6,6 +6,7 @@
 #include "hardware/clocks.h"
 #include "hardware/structs/pll.h"
 #include "hardware/structs/clocks.h"
+#include <string.h>
 
 
 #define WRAP 10000
@@ -15,91 +16,45 @@ float clkdiv;
 uint min;
 uint max;
 
-static uint slice_map[30];
+static int slice_map[30];
 static uint slice_active[8];
 static void (*pwm_cb[8])(void);
 static uint servo_pos[32];
 static uint servo_pos_buf[16];
+static pwm_config slice_cfg[8];
 
-static pwm_generic_cb(uint slice)
+static void wrap_cb()
 {
-    pwm_clear_irq(slice);
-
     uint offset;
 
-    offset = 16 * ((servo_pos_buf[slice + 0] + 1) % 2);
-    pwm_set_chan_level(slice, 0, servo_pos[offset + slice + 0]);
-    //servo_pos_buf[slice + 0] = (servo_pos_buf[slice + 0] + 16) % 32; // flip buffer
+    for (int i = 0; i < 8; ++i)
+    {
+        if (slice_active[i] == 0) continue;
 
-    offset = 16 * ((servo_pos_buf[slice + 1] + 1) % 2);
-    pwm_set_chan_level(slice, 1, servo_pos[offset + slice + 1]);
-    //servo_pos_buf[slice + 1] = (servo_pos_buf[slice + 1] + 16) % 32; // flip buffer
-}
+        pwm_clear_irq(i);
+        offset = 16 * ((servo_pos_buf[i + 0] + 1) % 2);
+        pwm_set_chan_level(i, 0, servo_pos[offset + i + 0]);
 
-static void pwm0_cb()
-{
-    pwm_generic_cb(0);
-}
-
-static void pwm1_cb()
-{
-    pwm_generic_cb(1);
-}
-
-
-static void pwm2_cb()
-{
-    pwm_generic_cb(2);
-}
-
-
-static void pwm3_cb()
-{
-    pwm_generic_cb(3);
-}
-
-
-static void pwm4_cb()
-{
-    pwm_generic_cb(4);
-}
-
-
-static void pwm5_cb()
-{
-    pwm_generic_cb(5);
-}
-
-
-static void pwm6_cb()
-{
-    pwm_generic_cb(6);
-}
-
-
-static void pwm7_cb()
-{
-    pwm_generic_cb(7);
+        offset = 16 * ((servo_pos_buf[i + 1] + 1) % 2);
+        pwm_set_chan_level(i, 1, servo_pos[offset + i + 1]);
+    }
 }
 
 int servo_init()
 {
-    memset(slice_map, 0xFF, 30 * sizeof(uint));
+    for (int i = 0; i < 30; ++i)
+    {
+        slice_map[i] = -1;
+    }
     memset(slice_active, 0, 8 * sizeof(uint));
     memset(servo_pos, 0, 32 * sizeof(uint));
     memset(servo_pos_buf, 0, 16 * sizeof(uint));
-    pwm_cb[0] = pwm0_cb;
-    pwm_cb[1] = pwm1_cb;
-    pwm_cb[2] = pwm2_cb;
-    pwm_cb[3] = pwm3_cb;
-    pwm_cb[4] = pwm4_cb;
-    pwm_cb[5] = pwm5_cb;
-    pwm_cb[6] = pwm6_cb;
-    pwm_cb[7] = pwm7_cb;
 
     clkdiv = (float)frequency_count_khz(CLOCKS_FC0_SRC_VALUE_PLL_SYS_CLKSRC_PRIMARY) * 1000.f / (FREQ * WRAP);
     min = 0.025f * WRAP;
     max = 0.125f * WRAP;
+
+    irq_set_exclusive_handler(PWM_IRQ_WRAP, wrap_cb);
 }
 
 int servo_attach(uint pin)
@@ -110,6 +65,8 @@ int servo_attach(uint pin)
         return 1;
     }
 
+    printf("slice: %d\n", slice);
+
     gpio_set_function(pin, GPIO_FUNC_PWM);
     slice_map[pin] = slice;
 
@@ -117,22 +74,27 @@ int servo_attach(uint pin)
     {
         pwm_clear_irq(slice);
         pwm_set_irq_enabled(slice, true);
-        irq_set_exclusive_handler(PWM_IRQ_WRAP, pwm_cb[slice]);
-        irq_set_enabled(PWM_IRQ_WRAP, true);
 
-        pwm_config cfg = pwm_get_default_config();
-        pwm_config_set_wrap(&cfg, WRAP);
-        pwm_config_set_clkdiv(&cfg, clkdiv);
-        pwm_init(slice, &cfg, true);
+        slice_cfg[slice] = pwm_get_default_config();
+        pwm_config_set_wrap(&slice_cfg[slice], WRAP);
+        pwm_config_set_clkdiv(&slice_cfg[slice], clkdiv);
+        pwm_init(slice, &slice_cfg[slice], true);
     }
 
     ++slice_active[slice];
+
+    irq_set_enabled(PWM_IRQ_WRAP, true);
 
     return 0;
 }
 
 int servo_move_to(uint pin, uint angle)
 {
+    if (slice_map[pin] < 0)
+    {
+        return 1;
+    }
+
     uint val = (float)angle / 180.f * (max - min) + min;
     uint pos = slice_map[pin] + (pin % 2);
     servo_pos[16 * servo_pos_buf[pos] + pos] = val;
