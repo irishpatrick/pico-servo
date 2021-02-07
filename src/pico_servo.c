@@ -18,7 +18,6 @@ uint max;
 
 static int slice_map[30];
 static uint slice_active[8];
-static void (*pwm_cb[8])(void);
 static uint servo_pos[32];
 static uint servo_pos_buf[16];
 static pwm_config slice_cfg[8];
@@ -65,8 +64,6 @@ int servo_attach(uint pin)
         return 1;
     }
 
-    printf("slice: %d\n", slice);
-
     gpio_set_function(pin, GPIO_FUNC_PWM);
     slice_map[pin] = slice;
 
@@ -79,6 +76,7 @@ int servo_attach(uint pin)
         pwm_config_set_wrap(&slice_cfg[slice], WRAP);
         pwm_config_set_clkdiv(&slice_cfg[slice], clkdiv);
         pwm_init(slice, &slice_cfg[slice], true);
+        pwm_set_chan_level(slice, pin % 2, 90);
     }
 
     ++slice_active[slice];
