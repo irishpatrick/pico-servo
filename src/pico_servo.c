@@ -49,11 +49,40 @@ int servo_init()
     memset(servo_pos, 0, 32 * sizeof(uint));
     memset(servo_pos_buf, 0, 16 * sizeof(uint));
 
-    clkdiv = (float)frequency_count_khz(CLOCKS_FC0_SRC_VALUE_PLL_SYS_CLKSRC_PRIMARY) * 1000.f / (FREQ * WRAP);
+    irq_set_exclusive_handler(PWM_IRQ_WRAP, wrap_cb);
+
+    return 0;
+}
+
+int servo_clock_auto()
+{
+    return servo_clock_source(CLOCKS_FC0_SRC_VALUE_PLL_SYS_CLKSRC_PRIMARY);
+}
+
+int servo_clock_source(uint src)
+{
+    clkdiv = (float)frequency_count_khz(src) * 1000.f / (FREQ * WRAP);
+    if (clkdiv == 0)
+    {
+        return 1;
+    }
     min = 0.025f * WRAP;
     max = 0.125f * WRAP;
 
-    irq_set_exclusive_handler(PWM_IRQ_WRAP, wrap_cb);
+    return 0;
+}
+
+int servo_clock_manual(uint freq)
+{
+    clkdiv = (float)freq * 1000.f / (FREQ * WRAP);
+    if (clkdiv == 0)
+    {
+        return 1;
+    }
+    min = 0.025f * WRAP;
+    max = 0.125f * WRAP;
+
+    return 0;
 }
 
 int servo_attach(uint pin)

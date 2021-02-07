@@ -8,8 +8,10 @@
 int main()
 {
     stdio_init_all();
-    
+
     servo_init();
+    servo_clock_auto();
+    
     servo_attach(A);
     servo_attach(B);
 
