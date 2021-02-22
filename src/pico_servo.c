@@ -31,19 +31,24 @@
 #include "hardware/structs/clocks.h"
 #include <string.h>
 
-
+#define KILO 1e3
+#define MICRO 1e-6
 #define WRAP 10000
 #define FREQ 50
 
-float clkdiv;
-uint min;
-uint max;
+static float clkdiv;
+static uint min;
+static uint max;
 
 static int slice_map[30];
 static uint slice_active[8];
 static uint servo_pos[32];
 static uint servo_pos_buf[16];
 static pwm_config slice_cfg[8];
+
+static uint min_us = 500;
+static uint max_us = 2500;
+static float us_per_unit = 0.f;
 
 static void wrap_cb()
 {
@@ -59,6 +64,17 @@ static void wrap_cb()
 
         offset = 16 * ((servo_pos_buf[i + 1] + 1) % 2);
         pwm_set_chan_level(i, 1, servo_pos[offset + i + 1]);
+    }
+}
+
+void servo_set_bounds(uint a, uint b)
+{
+    min_us = a;
+    max_us = b;
+    if (us_per_unit > 0.f)
+    {
+        min = min_us / us_per_unit;
+	max = max_us / us_per_unit;
     }
 }
 
@@ -84,13 +100,18 @@ int servo_clock_auto()
 
 int servo_clock_source(uint src)
 {
-    clkdiv = (float)frequency_count_khz(src) * 1000.f / (FREQ * WRAP);
+    clkdiv = (float)frequency_count_khz(src) * (float)KILO / (FREQ * WRAP);
     if (clkdiv == 0)
     {
         return 1;
     }
-    min = 0.025f * WRAP;
-    max = 0.125f * WRAP;
+    us_per_unit = 1.f / (FREQ * WRAP) / MICRO;
+    
+    //min = 0.025f * WRAP;
+    //max = 0.125f * WRAP;
+
+    min = min_us / us_per_unit;
+    max = max_us / us_per_unit;
 
     return 0;
 }
@@ -148,6 +169,19 @@ int servo_move_to(uint pin, uint angle)
     uint val = (float)angle / 180.f * (max - min) + min;
     uint pos = slice_map[pin] + (pin % 2);
     servo_pos[16 * servo_pos_buf[pos] + pos] = val;
+    servo_pos_buf[pos] = (servo_pos_buf[pos] + 1) % 2;
+    return 0;
+}
+
+int servo_microseconds(uint pin, uint us)
+{
+    if (slice_map[pin] < 0)
+    {
+        return 1;
+    }
+    
+    uint pos = slice_map[pin] + (pin % 2);
+    servo_pos[16 * servo_pos_buf[pos] + pos] = us;
     servo_pos_buf[pos] = (servo_pos_buf[pos] + 1) % 2;
     return 0;
 }
