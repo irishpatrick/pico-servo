@@ -67,6 +67,14 @@ static void wrap_cb()
     }
 }
 
+/**
+ * @brief Set min and max microseconds.
+ * 
+ * Set min and max microseconds.
+ * 
+ * @param a the min time in microseconds
+ * @param b the max time in microseconds
+ */
 void servo_set_bounds(uint a, uint b)
 {
     min_us = a;

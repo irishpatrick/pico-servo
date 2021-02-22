@@ -27,6 +27,7 @@
 #include "pico/stdlib.h"
 
 void servo_set_bounds(uint, uint);
+
 int servo_init();
 int servo_clock_auto();
 int servo_clock_source(uint);

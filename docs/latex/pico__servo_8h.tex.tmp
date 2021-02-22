@@ -1,0 +1,98 @@
+\hypertarget{pico__servo_8h}{}\doxysection{include/pico\+\_\+servo.h File Reference}
+\label{pico__servo_8h}\index{include/pico\_servo.h@{include/pico\_servo.h}}
+{\ttfamily \#include \char`\"{}pico/stdlib.\+h\char`\"{}}\newline
+Include dependency graph for pico\+\_\+servo.\+h\+:
+% FIG 0
+This graph shows which files directly or indirectly include this file\+:
+% FIG 1
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{pico__servo_8h_afb983b1b76c85caf48f247f64b1f1e40}{servo\+\_\+set\+\_\+bounds}} (uint, uint)
+\begin{DoxyCompactList}\small\item\em Set min and max microseconds. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{pico__servo_8h_ab37b425be34af8d786ce22d2f405e195}{servo\+\_\+init}} ()
+\item 
+int \mbox{\hyperlink{pico__servo_8h_a32cda93c4161bf7f3f0ed272e59d980c}{servo\+\_\+clock\+\_\+auto}} ()
+\item 
+int \mbox{\hyperlink{pico__servo_8h_a783117d422e613f4a36dab41d4cbd302}{servo\+\_\+clock\+\_\+source}} (uint)
+\item 
+int \mbox{\hyperlink{pico__servo_8h_a355b3ac6b4f2222972354afa8db7ee99}{servo\+\_\+clock\+\_\+manual}} (uint)
+\item 
+int \mbox{\hyperlink{pico__servo_8h_af422a210bb36edc507808a26a831410b}{servo\+\_\+attach}} (uint)
+\item 
+int \mbox{\hyperlink{pico__servo_8h_af4013806a8b35b3a9b673f4c916f1fe6}{servo\+\_\+enable}} ()
+\item 
+int \mbox{\hyperlink{pico__servo_8h_aebf83cdb0d1ae2eca44c370ab7c07dcf}{servo\+\_\+move\+\_\+to}} (uint, uint)
+\item 
+int \mbox{\hyperlink{pico__servo_8h_a53e05f9b91a058e2994c13c10a90f50d}{servo\+\_\+microseconds}} (uint, uint)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{pico__servo_8h_af422a210bb36edc507808a26a831410b}\label{pico__servo_8h_af422a210bb36edc507808a26a831410b}} 
+\index{pico\_servo.h@{pico\_servo.h}!servo\_attach@{servo\_attach}}
+\index{servo\_attach@{servo\_attach}!pico\_servo.h@{pico\_servo.h}}
+\doxysubsubsection{\texorpdfstring{servo\_attach()}{servo\_attach()}}
+{\footnotesize\ttfamily int servo\+\_\+attach (\begin{DoxyParamCaption}\item[{uint}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{pico__servo_8h_a32cda93c4161bf7f3f0ed272e59d980c}\label{pico__servo_8h_a32cda93c4161bf7f3f0ed272e59d980c}} 
+\index{pico\_servo.h@{pico\_servo.h}!servo\_clock\_auto@{servo\_clock\_auto}}
+\index{servo\_clock\_auto@{servo\_clock\_auto}!pico\_servo.h@{pico\_servo.h}}
+\doxysubsubsection{\texorpdfstring{servo\_clock\_auto()}{servo\_clock\_auto()}}
+{\footnotesize\ttfamily int servo\+\_\+clock\+\_\+auto (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{pico__servo_8h_a355b3ac6b4f2222972354afa8db7ee99}\label{pico__servo_8h_a355b3ac6b4f2222972354afa8db7ee99}} 
+\index{pico\_servo.h@{pico\_servo.h}!servo\_clock\_manual@{servo\_clock\_manual}}
+\index{servo\_clock\_manual@{servo\_clock\_manual}!pico\_servo.h@{pico\_servo.h}}
+\doxysubsubsection{\texorpdfstring{servo\_clock\_manual()}{servo\_clock\_manual()}}
+{\footnotesize\ttfamily int servo\+\_\+clock\+\_\+manual (\begin{DoxyParamCaption}\item[{uint}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{pico__servo_8h_a783117d422e613f4a36dab41d4cbd302}\label{pico__servo_8h_a783117d422e613f4a36dab41d4cbd302}} 
+\index{pico\_servo.h@{pico\_servo.h}!servo\_clock\_source@{servo\_clock\_source}}
+\index{servo\_clock\_source@{servo\_clock\_source}!pico\_servo.h@{pico\_servo.h}}
+\doxysubsubsection{\texorpdfstring{servo\_clock\_source()}{servo\_clock\_source()}}
+{\footnotesize\ttfamily int servo\+\_\+clock\+\_\+source (\begin{DoxyParamCaption}\item[{uint}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{pico__servo_8h_af4013806a8b35b3a9b673f4c916f1fe6}\label{pico__servo_8h_af4013806a8b35b3a9b673f4c916f1fe6}} 
+\index{pico\_servo.h@{pico\_servo.h}!servo\_enable@{servo\_enable}}
+\index{servo\_enable@{servo\_enable}!pico\_servo.h@{pico\_servo.h}}
+\doxysubsubsection{\texorpdfstring{servo\_enable()}{servo\_enable()}}
+{\footnotesize\ttfamily int servo\+\_\+enable (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{pico__servo_8h_ab37b425be34af8d786ce22d2f405e195}\label{pico__servo_8h_ab37b425be34af8d786ce22d2f405e195}} 
+\index{pico\_servo.h@{pico\_servo.h}!servo\_init@{servo\_init}}
+\index{servo\_init@{servo\_init}!pico\_servo.h@{pico\_servo.h}}
+\doxysubsubsection{\texorpdfstring{servo\_init()}{servo\_init()}}
+{\footnotesize\ttfamily int servo\+\_\+init (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{pico__servo_8h_a53e05f9b91a058e2994c13c10a90f50d}\label{pico__servo_8h_a53e05f9b91a058e2994c13c10a90f50d}} 
+\index{pico\_servo.h@{pico\_servo.h}!servo\_microseconds@{servo\_microseconds}}
+\index{servo\_microseconds@{servo\_microseconds}!pico\_servo.h@{pico\_servo.h}}
+\doxysubsubsection{\texorpdfstring{servo\_microseconds()}{servo\_microseconds()}}
+{\footnotesize\ttfamily int servo\+\_\+microseconds (\begin{DoxyParamCaption}\item[{uint}]{,  }\item[{uint}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{pico__servo_8h_aebf83cdb0d1ae2eca44c370ab7c07dcf}\label{pico__servo_8h_aebf83cdb0d1ae2eca44c370ab7c07dcf}} 
+\index{pico\_servo.h@{pico\_servo.h}!servo\_move\_to@{servo\_move\_to}}
+\index{servo\_move\_to@{servo\_move\_to}!pico\_servo.h@{pico\_servo.h}}
+\doxysubsubsection{\texorpdfstring{servo\_move\_to()}{servo\_move\_to()}}
+{\footnotesize\ttfamily int servo\+\_\+move\+\_\+to (\begin{DoxyParamCaption}\item[{uint}]{,  }\item[{uint}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{pico__servo_8h_afb983b1b76c85caf48f247f64b1f1e40}\label{pico__servo_8h_afb983b1b76c85caf48f247f64b1f1e40}} 
+\index{pico\_servo.h@{pico\_servo.h}!servo\_set\_bounds@{servo\_set\_bounds}}
+\index{servo\_set\_bounds@{servo\_set\_bounds}!pico\_servo.h@{pico\_servo.h}}
+\doxysubsubsection{\texorpdfstring{servo\_set\_bounds()}{servo\_set\_bounds()}}
+{\footnotesize\ttfamily void servo\+\_\+set\+\_\+bounds (\begin{DoxyParamCaption}\item[{uint}]{a,  }\item[{uint}]{b }\end{DoxyParamCaption})}
+
+
+
+Set min and max microseconds. 
+
+Set min and max microseconds.
+
+
+\begin{DoxyParams}{Parameters}
+{\em a} & the min time in microseconds \\
+\hline
+{\em b} & the max time in microseconds \\
+\hline
+\end{DoxyParams}
