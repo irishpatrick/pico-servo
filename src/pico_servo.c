@@ -50,7 +50,7 @@ static uint min_us = 500;
 static uint max_us = 2500;
 static float us_per_unit = 0.f;
 
-static void wrap_cb()
+static void wrap_cb(void)
 {
     uint offset;
 
@@ -86,7 +86,7 @@ void servo_set_bounds(uint a, uint b)
     }
 }
 
-int servo_init()
+int servo_init(void)
 {
     for (int i = 0; i < 30; ++i)
     {
@@ -96,12 +96,13 @@ int servo_init()
     memset(servo_pos, 0, 32 * sizeof(uint));
     memset(servo_pos_buf, 0, 16 * sizeof(uint));
 
-    irq_set_exclusive_handler(PWM_IRQ_WRAP, wrap_cb);
+    //irq_set_exclusive_handler(PWM_IRQ_WRAP, wrap_cb);
+    irq_add_shared_handler(PWM_IRQ_WRAP, wrap_cb, PICO_SHARED_IRQ_HANDLER_DEFAULT_ORDER_PRIORITY);
 
     return 0;
 }
 
-int servo_clock_auto()
+int servo_clock_auto(void)
 {
     return servo_clock_source(CLOCKS_FC0_SRC_VALUE_PLL_SYS_CLKSRC_PRIMARY);
 }

@@ -28,12 +28,12 @@
 
 void servo_set_bounds(uint, uint);
 
-int servo_init();
-int servo_clock_auto();
+int servo_init(void);
+int servo_clock_auto(void);
 int servo_clock_source(uint);
 int servo_clock_manual(uint);
 int servo_attach(uint);
-int servo_enable();
+int servo_enable(void);
 int servo_move_to(uint, uint);
 int servo_microseconds(uint, uint);
 
