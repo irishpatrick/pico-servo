@@ -86,6 +86,12 @@ void servo_set_bounds(uint a, uint b)
     }
 }
 
+/**
+ * @brief Set up the servo system.
+ * 
+ * Attach IRQ handler, allocate and initialize memory. * 
+ * 
+ */
 int servo_init(void)
 {
     for (int i = 0; i < 30; ++i)
@@ -102,11 +108,25 @@ int servo_init(void)
     return 0;
 }
 
+
+/**
+ * @brief Reference the primary clock.
+ * 
+ * Set the clock source to CLOCKS_FC0_SRC_VALUE_PLL_SYS_CLKSRC_PRIMARY
+ * 
+ */
 int servo_clock_auto(void)
 {
     return servo_clock_source(CLOCKS_FC0_SRC_VALUE_PLL_SYS_CLKSRC_PRIMARY);
 }
 
+
+/**
+ * @brief Specify the clock source.
+ *
+ * Specify the clock source. 
+ * 
+ */
 int servo_clock_source(uint src)
 {
     clkdiv = (float)frequency_count_khz(src) * (float)KILO / (FREQ * WRAP);
@@ -115,9 +135,6 @@ int servo_clock_source(uint src)
         return 1;
     }
     us_per_unit = 1.f / (FREQ * WRAP) / MICRO;
-    
-    //min = 0.025f * WRAP;
-    //max = 0.125f * WRAP;
 
     min = min_us / us_per_unit;
     max = max_us / us_per_unit;
@@ -125,6 +142,12 @@ int servo_clock_source(uint src)
     return 0;
 }
 
+/**
+ * @brief Probably don't use this
+ *
+ * Not a good idea
+ * 
+ */
 int servo_clock_manual(uint freq)
 {
     clkdiv = (float)freq * 1000.f / (FREQ * WRAP);
@@ -138,6 +161,13 @@ int servo_clock_manual(uint freq)
     return 0;
 }
 
+/**
+ * @brief Allocate a pin to controlling a servo
+ *
+ * Binds the specified pin to PWM output.
+ * 
+ * @param pin The pin to make PWM output.
+ */
 int servo_attach(uint pin)
 {
     uint slice = pwm_gpio_to_slice_num(pin);
@@ -168,6 +198,13 @@ int servo_attach(uint pin)
     return 0;
 }
 
+/**
+ * @brief Move a servo.
+ * Move the servo on the specified pin to the specified angle.
+ *
+ * @param pin The PWM pin controlling a servo.
+ * @param angle The angle to move to.
+ */
 int servo_move_to(uint pin, uint angle)
 {
     if (slice_map[pin] < 0)
@@ -182,6 +219,15 @@ int servo_move_to(uint pin, uint angle)
     return 0;
 }
 
+/**
+ * @brief Move a servo.
+ *
+ * Move a servo by specifing microseconds.
+ * Note that this is dangerous and can damage your servo if you are not careful!
+ *
+ * @param pin The PWM pin.
+ * @param us The amount of time in microseconds the PWM signal is high.
+ */
 int servo_microseconds(uint pin, uint us)
 {
     if (slice_map[pin] < 0)
