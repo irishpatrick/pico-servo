@@ -50,7 +50,7 @@ static uint min_us = 500;
 static uint max_us = 2500;
 static float us_per_unit = 0.f;
 
-static void wrap_cb(void)
+/*static void wrap_cb(void)
 {
     uint offset;
 
@@ -65,7 +65,7 @@ static void wrap_cb(void)
         offset = 16 * ((servo_pos_buf[i + 1] + 1) % 2);
         pwm_set_chan_level(i, 1, servo_pos[offset + i + 1]);
     }
-}
+}*/
 
 /**
  * @brief Set min and max microseconds.
@@ -103,7 +103,7 @@ int servo_init(void)
     memset(servo_pos_buf, 0, 16 * sizeof(uint));
 
     //irq_set_exclusive_handler(PWM_IRQ_WRAP, wrap_cb);
-    irq_add_shared_handler(PWM_IRQ_WRAP, wrap_cb, PICO_SHARED_IRQ_HANDLER_DEFAULT_ORDER_PRIORITY);
+    //irq_add_shared_handler(PWM_IRQ_WRAP, wrap_cb, PICO_SHARED_IRQ_HANDLER_DEFAULT_ORDER_PRIORITY);
 
     return 0;
 }
@@ -181,8 +181,8 @@ int servo_attach(uint pin)
 
     if (slice_active[slice] == 0)
     {
-        pwm_clear_irq(slice);
-        pwm_set_irq_enabled(slice, true);
+        //pwm_clear_irq(slice);
+        //pwm_set_irq_enabled(slice, true);
 
         slice_cfg[slice] = pwm_get_default_config();
         pwm_config_set_wrap(&slice_cfg[slice], WRAP);
@@ -193,7 +193,7 @@ int servo_attach(uint pin)
 
     ++slice_active[slice];
 
-    irq_set_enabled(PWM_IRQ_WRAP, true);
+    //irq_set_enabled(PWM_IRQ_WRAP, true);
 
     return 0;
 }
@@ -213,9 +213,10 @@ int servo_move_to(uint pin, uint angle)
     }
 
     uint val = (float)angle / 180.f * (max - min) + min;
-    uint pos = slice_map[pin] + (pin % 2);
-    servo_pos[16 * servo_pos_buf[pos] + pos] = val;
-    servo_pos_buf[pos] = (servo_pos_buf[pos] + 1) % 2;
+    //uint pos = slice_map[pin] + (pin % 2);
+    pwm_set_chan_level(slice_map[pin], pin % 2, val);
+    //servo_pos[16 * servo_pos_buf[pos] + pos] = val;
+    //servo_pos_buf[pos] = (servo_pos_buf[pos] + 1) % 2;
     return 0;
 }
 
@@ -235,8 +236,9 @@ int servo_microseconds(uint pin, uint us)
         return 1;
     }
     
-    uint pos = slice_map[pin] + (pin % 2);
-    servo_pos[16 * servo_pos_buf[pos] + pos] = us;
-    servo_pos_buf[pos] = (servo_pos_buf[pos] + 1) % 2;
+    //uint pos = slice_map[pin] + (pin % 2);
+    pwm_set_chan_level(slice_map[pin], pin % 2, us);
+    //servo_pos[16 * servo_pos_buf[pos] + pos] = us;
+    //servo_pos_buf[pos] = (servo_pos_buf[pos] + 1) % 2;
     return 0;
 }
