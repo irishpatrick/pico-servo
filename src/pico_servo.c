@@ -34,7 +34,7 @@
 #define KILO 1e3
 #define MICRO 1e-6
 #define WRAP 10000
-#define FREQ 50
+#define FREQ 50 // PWM frequency in hertz
 
 static float clkdiv;
 static uint min;
@@ -56,7 +56,10 @@ static void wrap_cb(void)
 
     for (int i = 0; i < 8; ++i)
     {
-        if (slice_active[i] == 0) continue;
+        if (slice_active[i] == 0)
+	{
+            continue;
+        }
 
         pwm_clear_irq(i);
         offset = 16 * ((servo_pos_buf[i + 0] + 1) % 2);
@@ -108,7 +111,6 @@ int servo_init(void)
     return 0;
 }
 
-
 /**
  * @brief Reference the primary clock.
  * 
@@ -119,7 +121,6 @@ int servo_clock_auto(void)
 {
     return servo_clock_source(CLOCKS_FC0_SRC_VALUE_PLL_SYS_CLKSRC_PRIMARY);
 }
-
 
 /**
  * @brief Specify the clock source.
@@ -200,7 +201,7 @@ int servo_attach(uint pin)
 
 /**
  * @brief Move a servo.
- * Move the servo on the specified pin to the specified angle.
+ * Move the servo on the specified pin to the specified angle in degrees.
  *
  * @param pin The PWM pin controlling a servo.
  * @param angle The angle to move to.
@@ -240,3 +241,4 @@ int servo_microseconds(uint pin, uint us)
     servo_pos_buf[pos] = (servo_pos_buf[pos] + 1) % 2;
     return 0;
 }
+
