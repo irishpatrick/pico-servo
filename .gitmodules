@@ -1,0 +1,3 @@
+[submodule "3rdparty/pico-libfixmath"]
+	path = 3rdparty/pico-libfixmath
+	url = https://github.com/irishpatrick/pico-libfixmath.git

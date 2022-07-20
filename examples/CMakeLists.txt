@@ -8,4 +8,4 @@ pico_add_extra_outputs(simple)
 
 target_include_directories(simple PRIVATE ../include)
 target_link_directories(simple PRIVATE ../build)
-target_link_libraries(simple PRIVATE pico_stdlib hardware_pwm pico-servo)
+target_link_libraries(simple PRIVATE pico_stdlib hardware_pwm pico-servo fixmath)
