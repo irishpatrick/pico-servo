@@ -29,12 +29,15 @@
 #include "hardware/clocks.h"
 #include "hardware/structs/pll.h"
 #include "hardware/structs/clocks.h"
+
+#include "fixmath.h"
+
 #include <string.h>
 
 #define KILO 1e3
 #define MICRO 1e-6
 #define WRAP 10000
-#define FREQ 50 // PWM frequency in hertz
+#define PWM_FREQ 50 // PWM frequency in hertz
 
 static float clkdiv;
 static uint min;
@@ -48,7 +51,7 @@ static pwm_config slice_cfg[8];
 
 static uint min_us = 500;
 static uint max_us = 2500;
-static float us_per_unit = 0.f;
+static fix16_t us_per_unit = 0.f;
 
 static void wrap_cb(void)
 {
@@ -82,10 +85,10 @@ void servo_set_bounds(uint a, uint b)
 {
     min_us = a;
     max_us = b;
-    if (us_per_unit > 0.f)
+    if (fix16_to_float(us_per_unit) > 0.0f)
     {
         min = min_us / us_per_unit;
-	max = max_us / us_per_unit;
+	    max = max_us / us_per_unit;
     }
 }
 
@@ -105,7 +108,6 @@ int servo_init(void)
     memset(servo_pos, 0, 32 * sizeof(uint));
     memset(servo_pos_buf, 0, 16 * sizeof(uint));
 
-    //irq_set_exclusive_handler(PWM_IRQ_WRAP, wrap_cb);
     irq_add_shared_handler(PWM_IRQ_WRAP, wrap_cb, PICO_SHARED_IRQ_HANDLER_DEFAULT_ORDER_PRIORITY);
 
     return 0;
@@ -130,12 +132,12 @@ int servo_clock_auto(void)
  */
 int servo_clock_source(uint src)
 {
-    clkdiv = (float)frequency_count_khz(src) * (float)KILO / (FREQ * WRAP);
+    clkdiv = (float)frequency_count_khz(src) * (float)KILO / (PWM_FREQ * WRAP);
     if (clkdiv == 0)
     {
         return 1;
     }
-    us_per_unit = 1.f / (FREQ * WRAP) / MICRO;
+    us_per_unit = 1.f / (PWM_FREQ * WRAP) / MICRO;
 
     min = min_us / us_per_unit;
     max = max_us / us_per_unit;
@@ -151,13 +153,13 @@ int servo_clock_source(uint src)
  */
 int servo_clock_manual(uint freq)
 {
-    clkdiv = (float)freq * 1000.f / (FREQ * WRAP);
+    clkdiv = (float)(freq * KILO) / (float)(PWM_FREQ * WRAP);
     if (clkdiv == 0)
     {
         return 1;
     }
-    min = 0.025f * WRAP;
-    max = 0.125f * WRAP;
+    min = 0.025f * (float)WRAP;
+    max = 0.125f * (float)WRAP;
 
     return 0;
 }
@@ -213,7 +215,13 @@ int servo_move_to(uint pin, uint angle)
         return 1;
     }
 
-    uint val = (float)angle / 180.f * (max - min) + min;
+    uint val = (uint)fix16_to_int(
+        fix16_mul(
+            fix16_div(fix16_from_int(angle), fix16_from_int(180)),
+            fix16_from_int(max - min)
+        )
+    ) + min;
+
     uint pos = slice_map[pin] + (pin % 2);
     servo_pos[16 * servo_pos_buf[pos] + pos] = val;
     servo_pos_buf[pos] = (servo_pos_buf[pos] + 1) % 2;
