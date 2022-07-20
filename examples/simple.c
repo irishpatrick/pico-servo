@@ -74,16 +74,19 @@ int main()
 
     while (1)
     {
-	if (!get_bootsel_button())
-	{
+        if (!get_bootsel_button())
+        {
             continue;
-	}
-        servo_move_to(A, 0);
-        servo_move_to(B, 0);
-        sleep_ms(500);
-        servo_move_to(A, 180);
-        servo_move_to(B, 90);
-        sleep_ms(500);
+        }
+        else
+        {
+            servo_move_to(A, 0);
+            servo_move_to(B, 0);
+            sleep_ms(500);
+            servo_move_to(A, 180);
+            servo_move_to(B, 90);
+            sleep_ms(500);
+        }
     }
     return 0;
 }

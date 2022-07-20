@@ -13,7 +13,7 @@ add_library(${PROJECT_NAME}
 	src/pico_servo.c
 )
 
-target_include_directories(${PROJECT_NAME} PRIVATE include)
+target_include_directories(${PROJECT_NAME} PRIVATE include ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/pico-libfixmath/include)
 
 # Pull in our pico_stdlib which pulls in commonly used features
 target_link_libraries(${PROJECT_NAME} pico_stdlib hardware_pwm fixmath)
