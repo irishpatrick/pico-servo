@@ -7,7 +7,7 @@ This is still a work-in-progress!
 Please raise an issue or a pull request for any problems/bugs/features/fixes!
 
 ## Installing Dependencies
-This library depends on [pico-libfixmath](git@github.com:irishpatrick/pico-servo.git). To install it, run the following command:<br>
+This library depends on [pico-libfixmath](git@github.com:irishpatrick/pico-servo.git). To install it, run the following command from the root of the repository:<br>
 `git submodule update --init --recursive`
 
 ## How to Build
